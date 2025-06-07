@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Example Scene</title>
+    <!--<script>window.AFRAME_SAMPLE_ASSETS_ROOT = "./sample-assets/";</script>-->
+    <script src="./aframe-master.min.js"></script>
+    <script src="./aframe-environment-component.min.js"></script>
+    <script>
+      AFRAME.registerComponent("models-array", {
+        schema: {
+          models: { type: "array", oneOf: ["one", "two", "three", "four"] },
+        },
+      });
+
+      AFRAME.registerComponent("draw-smiley", {
+        schema: {
+          canvas: { type: "selector" },
+        },
+        init() {
+          var canvas = this.data.canvas;
+          var ctx = canvas.getContext("2d");
+
+          // Clear canvas and fill with white background
+          ctx.fillStyle = "white";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          // Center point of canvas
+          var centerX = canvas.width / 2;
+          var centerY = canvas.height / 2;
+
+          // Smiley parameters
+          var faceRadius = 200;
+          var eyeRadius = 20;
+          var eyeOffsetX = 60;
+          var eyeOffsetY = 50;
+          var mouthRadius = 120;
+
+          // Draw face
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, faceRadius, 0, Math.PI * 2, true); // Outer circle
+          ctx.fillStyle = "yellow";
+          ctx.fill();
+          ctx.strokeStyle = "black";
+          ctx.lineWidth = 4;
+          ctx.stroke();
+
+          // Draw eyes
+          ctx.beginPath();
+          ctx.arc(
+            centerX - eyeOffsetX,
+            centerY - eyeOffsetY,
+            eyeRadius,
+            0,
+            Math.PI * 2,
+            true
+          ); // Left eye
+          ctx.arc(
+            centerX + eyeOffsetX,
+            centerY - eyeOffsetY,
+            eyeRadius,
+            0,
+            Math.PI * 2,
+            true
+          ); // Right eye
+          ctx.fillStyle = "black";
+          ctx.fill();
+
+          // Draw smile
+          ctx.beginPath();
+          ctx.arc(centerX, centerY + 30, mouthRadius, 0, Math.PI, false); // Mouth (smile)
+          ctx.lineWidth = 8;
+          ctx.strokeStyle = "black";
+          ctx.stroke();
+        },
+      });
+
+      let hasKey = false;
+
+      AFRAME.registerComponent("pickup-key", {
+        init: function () {
+          this.el.addEventListener("click", () => {
+            hasKey = true;
+            this.el.setAttribute("visible", "false");
+            document
+              .querySelector("#text")
+              .setAttribute("value", "Has agafat la clau!");
+          });
+        },
+      });
+
+      AFRAME.registerComponent("open-door", {
+        init: function () {
+          this.el.addEventListener("click", () => {
+            if (hasKey) {
+              this.el.setAttribute("animation", {
+                property: "rotation",
+                to: "0 90 0",
+                dur: 1000,
+              });
+              document
+                .querySelector("#text")
+                .setAttribute("value", "Has obert la porta!");
+            } else {
+              document
+                .querySelector("#text")
+                .setAttribute("value", "Necessites la clau!");
+            }
+          });
+        },
+      });
+    </script>
+  </head>
+  <body>
+    <a-scene
+      physics="type: cannon; gravity: -9.8"
+      embedded
+      inspector="url: https://cdn.jsdelivr.net/gh/c-frame/aframe-editor@1.7.8/dist/aframe-editor.min.js"
+    >
+      <a-assets>
+        <canvas id="canvasTexture" width="512" height="512" />
+        <a-mixin id="blue" material="color: #4CC3D9"></a-mixin>
+        <a-mixin
+          id="blueBox"
+          geometry="primitive: box; depth: 2; height: 5; width: 1"
+          material="color: #4CC3D9"
+        ></a-mixin>
+        <a-mixin
+          id="box"
+          geometry="primitive: box; depth: 1; height: 1; width: 1"
+        ></a-mixin>
+        <a-mixin
+          id="cylinder"
+          geometry="primitive: cylinder; height: 0.3; radius: 0.75; segmentsRadial: 6"
+        ></a-mixin>
+        <a-mixin id="green" material="color: #7BC8A4"></a-mixin>
+        <a-mixin id="orange" material="color: #F16745"></a-mixin>
+        <a-mixin id="purple" material="color: #93648D"></a-mixin>
+        <a-mixin id="short" scale="1 0.5 1"></a-mixin>
+        <a-mixin id="yellow" material="color: #FFC65D"></a-mixin>
+        <img id="crateImg" src="./crate.svg" />
+        <img id="floorImg" src="./grass.svg" />
+      </a-assets>
+
+      <a-entity
+        id="environment"
+        environment="preset: forest; fog: 0"
+      ></a-entity>
+
+      <!-- Meshes. -->
+      <a-entity id="aBlueBox" mixin="blueBox" position="0 8 0"></a-entity>
+      <a-entity
+        id="shortOrangeBox"
+        mixin="short orange box"
+        position="-5 2 0"
+      ></a-entity>
+      <a-entity
+        id="shortYellowBox"
+        mixin="short yellow box"
+        position="5 2 0"
+      ></a-entity>
+      <a-entity
+        id="redBox"
+        geometry="primitive: box"
+        material="color: #f00"
+        position="-4 1 0"
+        animation="property: object3D.rotation.y; to: 360; loop: true; easing: linear; dur: 9600"
+      ></a-entity>
+      <a-entity
+        id="yellowSphere"
+        geometry="primitive: sphere"
+        material="color: #ff0; roughness: 1"
+        position="-2 2 -2"
+        models-array="models:one,two"
+      ></a-entity>
+      <a-box
+        src="./brick.svg"
+        position="-5 5 -2"
+        width="1"
+        color="#F16745"
+      ></a-box>
+      <a-box
+        id="aBox"
+        position="2.35528 2 0"
+        height="2"
+        color="#FFC65D"
+      ></a-box>
+      <a-plane
+        id="smiley"
+        position="2.5 2 0"
+        width="1"
+        height="1"
+        material="src: #canvasTexture"
+        draw-smiley="canvas: #canvasTexture"
+      ></a-plane>
+
+      <!-- Models. -->
+      <a-entity
+        class="boxClass"
+        geometry="primitive: box"
+        material="src: #crateImg"
+        position="3 4 0"
+      ></a-entity>
+      <a-entity
+        class="boxClass"
+        geometry="primitive: box"
+        material="color: #0f0"
+        position="4 2 4"
+      ></a-entity>
+
+      <a-box position="-1 0.5 -3" color="gold" pickup-key></a-box>
+
+      <a-box
+        id="door"
+        position="2 1.5 -4"
+        depth="0.1"
+        height="3"
+        width="1"
+        color="#8B4513"
+        open-door
+      ></a-box>
+
+      <a-text
+        id="text"
+        value="Troba la clau!"
+        position="-1 2 -3"
+        color="black"
+      ></a-text>
+
+      <!-- Floor. -->
+      <a-entity
+        id="floor"
+        geometry="primitive: box; height: 0.2; depth: 24; width: 24"
+        material="src: #crateImg; color: #fafafa; metalness: 0.1; repeat: 50 20; roughness: 1"
+      ></a-entity>
+
+      <!-- Lights. -->
+      <a-entity
+        id="pointLight"
+        light="type: point; intensity: 0.25"
+        position="0 3 3"
+      ></a-entity>
+
+      <!-- Camera. -->
+      <a-entity id="cameraWrapper" position="0 1.6 8">
+        <a-entity id="camera" camera look-controls wasd-controls>
+          <!-- Cursor. -->
+          <a-entity
+            id="cursor"
+            position="0 0 -2"
+            geometry="primitive: ring; radiusOuter: 0.016; radiusInner: 0.01"
+            material="color: #ff9; shader: flat; transparent: true; opacity: 0.5"
+            scale="2 2 2"
+            raycaster
+          >
+          </a-entity>
+        </a-entity>
+      </a-entity>
+
+      <a-entity id="leftHand" laser-controls="hand: left"></a-entity>
+      <a-entity id="rightHand" laser-controls="hand: right"></a-entity>
+    </a-scene>
+
+    <script src="./aframe-inspector.min.js"></script>
+  </body>
+</html>
