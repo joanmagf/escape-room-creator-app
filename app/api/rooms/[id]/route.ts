@@ -1,4 +1,4 @@
-import { Room } from "@/app/lib/types";
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -7,18 +7,68 @@ export async function GET(
 ) {
   const { id } = params;
 
-  // Simular dades d'una sala d'escape
-  const room: Room = {
-    id,
-    name: `Sala d'escape ${id}`,
-    description: "Descripció de la sala d'escape",
-    entities: [
-      '<a-box id="object-1" position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9" selectable escape-interactive="type: question; question: Quant fa 2+2?; answer: 4; feedback: Molt bé!; unlocks: object-2"></a-box>',
-      '<a-sphere id="object-2" position="0 1.25 -5" radius="1.25" color="#EF2D5E" selectable visible="false"></a-sphere>',
-    ],
-  };
+  try {
+    const room = await prisma.room.findUnique({
+      where: { id },
+      include: {
+        entities: {
+          include: {
+            interactions: true,
+          },
+        },
+        interactions: true,
+      },
+    });
 
-  return NextResponse.json(room);
+    if (!room) {
+      return NextResponse.json({ error: "Sala no trobada" }, { status: 404 });
+    }
+
+    return NextResponse.json(room);
+  } catch (error) {
+    console.error("Error obtenint la sala:", error);
+    return NextResponse.json(
+      { error: "Error obtenint la sala" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+
+  try {
+    const data = await request.json();
+
+    const room = await prisma.room.update({
+      where: { id },
+      data: {
+        name: data.name,
+        description: data.description,
+        htmlContent: data.htmlContent,
+        isActive: data.isActive ?? true,
+      },
+      include: {
+        entities: {
+          include: {
+            interactions: true,
+          },
+        },
+        interactions: true,
+      },
+    });
+
+    return NextResponse.json(room);
+  } catch (error) {
+    console.error("Error actualitzant la sala:", error);
+    return NextResponse.json(
+      { error: "Error actualitzant la sala" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function DELETE(
@@ -27,10 +77,18 @@ export async function DELETE(
 ) {
   const { id } = params;
 
-  // Eliminar la sala de la base de dades
-  console.log("Eliminant sala amb ID:", id);
+  try {
+    await prisma.room.update({
+      where: { id },
+      data: { isActive: false },
+    });
 
-  // Aquí hauries de connectar amb la teva base de dades per eliminar la sala
-
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error eliminant la sala:", error);
+    return NextResponse.json(
+      { error: "Error eliminant la sala" },
+      { status: 500 }
+    );
+  }
 }

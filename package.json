@@ -5,24 +5,31 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@c-frame/aframe-physics-system": "^4.2.3",
+    "@prisma/client": "^5.7.1",
     "@shadcn/ui": "^0.0.4",
     "@types/aframe": "^1.2.8",
     "aframe": "^1.7.1",
     "aframe-environment-component": "^1.5.0",
-    "aframe-inspector": "^1.7.0",
-    "aframe-watcher": "^1.4.0",
     "autoprefixer": "^10.4.17",
     "next": "14.1.0",
+    "pg": "^8.11.3",
     "postcss": "^8.4.35",
+    "prisma": "^5.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.5.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.19",
+    "@types/pg": "^8.10.9",
     "@types/react": "^18.2.57",
     "@types/react-dom": "^18.2.19",
     "raw-loader": "^4.0.2",

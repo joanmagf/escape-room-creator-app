@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Room {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  htmlContent String?  // Contingut HTML de la sala
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacions
+  entities    Entity[]
+  interactions Interaction[]
+  
+  @@map("rooms")
+}
+
+model Entity {
+  id          String   @id @default(cuid())
+  roomId      String
+  name        String
+  type        String   // box, sphere, cylinder, etc.
+  position    String   // "x y z"
+  rotation    String?  // "x y z"
+  scale       String?  // "x y z"
+  color       String?
+  material    String?
+  visible     Boolean  @default(true)
+  properties  Json?    // Propietats addicionals en format JSON
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacions
+  room         Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  interactions Interaction[]
+  
+  @@map("entities")
+}
+
+model Interaction {
+  id          String   @id @default(cuid())
+  roomId      String
+  entityId    String?  // Pot ser null per interaccions globals
+  type        String   // question, info, unlock, animation, etc.
+  trigger     String   // click, proximity, timer, etc.
+  question    String?
+  answer      String?
+  feedback    String?
+  unlocks     String?  // ID de l'entitat que es desbloqueja
+  animation   Json?    // Configuració d'animació
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relacions
+  room   Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  entity Entity? @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  
+  @@map("interactions")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      String   @default("student") // student, teacher, admin
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relacions
+  progress  UserProgress[]
+  
+  @@map("users")
+}
+
+model UserProgress {
+  id           String   @id @default(cuid())
+  userId       String
+  roomId       String
+  completed    Boolean  @default(false)
+  score        Int?
+  timeSpent    Int?     // en segons
+  completedAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Relacions
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, roomId])
+  @@map("user_progress")
+} 

@@ -43,6 +43,10 @@ export default function InteractionsPanel({ entity }: InteractionsPanelProps) {
     if (!entity) return;
 
     const interactionData: Interaction = {
+      id: "",
+      roomId: "",
+      trigger: "",
+      isActive: true,
       type: interactionType,
       question: question,
       answer: answer,
@@ -50,7 +54,7 @@ export default function InteractionsPanel({ entity }: InteractionsPanelProps) {
       unlocks: unlocksId,
     };
 
-    entity.setAttribute("escape-interactive", interactionData);
+    entity.setAttribute("escape-interactive", JSON.stringify(interactionData));
   };
 
   return (

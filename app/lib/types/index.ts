@@ -57,12 +57,6 @@ export interface UserProgress {
   timeSpent?: number; // en segons
   completedAt?: Date;
 }
-export interface Template {
-  id: string;
-  name: string;
-  description: string;
-  entities: string[];
-}
 
 // types/Object3D.ts
 export interface Object3D {

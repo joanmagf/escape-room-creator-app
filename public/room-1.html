@@ -4,9 +4,8 @@
     <meta charset="utf-8" />
     <title>Example Scene</title>
     <!--<script>window.AFRAME_SAMPLE_ASSETS_ROOT = "./sample-assets/";</script>-->
-    <script src="./../lib-aframe/aframe-master.min.js"></script>
-    <script src="./../lib-aframe/aframe-environment-component.min.js"></script>
-        <script src="./../lib-aframe/aframe-inspector.min.js"></script>
+    <script src="./aframe-master.min.js"></script>
+    <script src="./aframe-environment-component.min.js"></script>
     <script>
       AFRAME.registerComponent("models-array", {
         schema: {
@@ -113,25 +112,11 @@
     </script>
   </head>
   <body>
-    <script>
-      window.addEventListener("message", (event) => {
-    if (event.data === "export-scene") {
-      if (!window.AFRAME || !window.AFRAME.INSPECTOR) {
-        alert("AFRAME o INSPECTOR no está disponible");
-        return;
-      }
-      try {
-        const html = AFRAME.INSPECTOR.getSceneExport();
-        event.source.postMessage({ type: "scene-export", html }, event.origin);
-      } catch (e) {
-        alert("No se pudo exportar. ¿Está abierto el inspector?");
-        console.error(e);
-      }
-    }
-  });
-    </script>
-
-    <a-scene debug="true">
+    <a-scene
+      physics="type: cannon; gravity: -9.8"
+      embedded
+      inspector="url: https://cdn.jsdelivr.net/gh/c-frame/aframe-editor@1.7.8/dist/aframe-editor.min.js"
+    >
       <a-assets>
         <canvas id="canvasTexture" width="512" height="512" />
         <a-mixin id="blue" material="color: #4CC3D9"></a-mixin>
@@ -153,8 +138,8 @@
         <a-mixin id="purple" material="color: #93648D"></a-mixin>
         <a-mixin id="short" scale="1 0.5 1"></a-mixin>
         <a-mixin id="yellow" material="color: #FFC65D"></a-mixin>
-        <img id="crateImg" src="./../lib-aframe/crate.svg" />
-        <img id="floorImg" src="./../lib-aframe/grass.svg" />
+        <img id="crateImg" src="./crate.svg" />
+        <img id="floorImg" src="./grass.svg" />
       </a-assets>
 
       <a-entity
@@ -163,7 +148,7 @@
       ></a-entity>
 
       <!-- Meshes. -->
-      <a-entity id="aBlueBox" material="color: #a600ff" mixin="blueBox" position="0 8 0"></a-entity>
+      <a-entity id="aBlueBox" mixin="blueBox" position="0 8 0"></a-entity>
       <a-entity
         id="shortOrangeBox"
         mixin="short orange box"
@@ -189,7 +174,7 @@
         models-array="models:one,two"
       ></a-entity>
       <a-box
-        src="./../lib-aframe/brick.svg"
+        src="./brick.svg"
         position="-5 5 -2"
         width="1"
         color="#F16745"
@@ -246,7 +231,7 @@
       <a-entity
         id="floor"
         geometry="primitive: box; height: 0.2; depth: 24; width: 24"
-        material="src: #crateImg; color: #fafafa; metalness: 0.1; repeat: 50 20; roughness: 1"
+        material="src: #floorImg; color: #fafafa; metalness: 0.1; repeat: 50 20; roughness: 1"
       ></a-entity>
 
       <!-- Lights. -->
@@ -276,5 +261,6 @@
       <a-entity id="rightHand" laser-controls="hand: right"></a-entity>
     </a-scene>
 
+    <script src="./aframe-inspector.min.js"></script>
   </body>
 </html>

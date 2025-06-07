@@ -1,141 +1,51 @@
-'use client';
-import { useRef, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { useState } from "react";
+"use client";
 
-export default function EditorPage() {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const params = useParams();
-  const id = params.roomId as string;
-  const [newName, setNewName] = useState("");
+import { Room } from "@/app/lib/types";
+import EscapeRoomEditor from "@/components/editor/EscapeRoomEditor";
+import { useEffect, useState } from "react";
 
-const handleSave = () => {
-  const iframeWindow = iframeRef.current?.contentWindow;
-  if (!iframeWindow) return;
+export default function EditorPage({ params }: { params: { roomId: string } }) {
+  const [roomData, setRoomData] = useState<Room>({
+    id: params.roomId,
+    name: "Nova sala d'escape",
+    description: "Descripció de la sala d'escape",
+    entities: [],
+  });
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Abrir inspector antes de exportar
-  iframeWindow.AFRAME?.INSPECTOR?.open();
-
-  // Espera un poco para que se abra (puedes ajustar el timeout)
-  setTimeout(() => {
-    iframeWindow.postMessage("export-scene", "*");
-  }, 500);
-};
-    useEffect(() => {
-    const receive = async (event: MessageEvent) => {
-      if (event.data?.type === "scene-export") {
-        const res = await fetch("/api/save-scene", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id,
-            html: event.data.html,
-          }),
-        });
-        if (res.ok) alert("Escena guardada y watcher ejecutado!");
-        else alert("Error al guardar");
+  // Carregar les dades de la sala si existeix
+  useEffect(() => {
+    const loadRoomData = async () => {
+      if (params.roomId !== "new") {
+        try {
+          const response = await fetch(`/api/rooms/${params.roomId}`);
+          if (response.ok) {
+            const data = await response.json();
+            setRoomData(data);
+          } else {
+            console.error("Error carregant la sala");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
       }
+      setLoading(false);
     };
 
-    window.addEventListener("message", receive);
-    return () => window.removeEventListener("message", receive);
-  }, [id]);
+    loadRoomData();
+  }, [params.roomId]);
 
-  const handleRename = async () => {
-    if (!newName) return alert("Introduce un nuevo nombre");
-
-    const res = await fetch("/api/rename-room", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ oldId: id, newId: newName }),
-    });
-
-    if (res.ok) {
-      alert("Renombrado!");
-      window.location.href = `/editor/${newName}`;
-    } else {
-      alert("Error al renombrar");
-    }
-  };
-
-  // ... useEffect para guardar (sin cambios)
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-xl">Carregant...</div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <button onClick={handleSave} style={{ position: "absolute", top: 10, left: 10 }}>
-        Guardar cambios
-      </button>
-
-      <input
-        type="text"
-        placeholder="Nuevo nombre"
-        value={newName}
-        onChange={(e) => setNewName(e.target.value)}
-        style={{ position: "absolute", top: 10, left: 150 }}
-      />
-
-      <button onClick={handleRename} style={{ position: "absolute", top: 10, left: 300 }}>
-        Renombrar
-      </button>
-    <br></br>
-    <br></br>
-    <br></br>
-      <iframe
-        ref={iframeRef}
-        src={`/rooms/${id}.html`}
-        style={{ width: "100vw", height: "100vh", border: "none" }}
-      />
+    <div className="min-h-screen bg-gray-100">
+      <EscapeRoomEditor roomData={roomData} setRoomData={setRoomData} />
     </div>
   );
 }
-
-
-
-// export default function EditorPage() {
-//   const iframeRef = useRef<HTMLIFrameElement>(null);
-//   const params = useParams();
-//   const id = params.roomId;
-
-//   const handleSave = () => {
-//     iframeRef.current?.contentWindow?.postMessage("export-scene", "*");
-//   };
-
-//   useEffect(() => {
-//     const receive = async (event: MessageEvent) => {
-//       if (event.data?.type === "scene-export") {
-//         const res = await fetch("/api/save-scene", {
-//           method: "POST",
-//           headers: { "Content-Type": "application/json" },
-//           body: JSON.stringify({
-//             id,
-//             html: event.data.html,
-//           }),
-//         });
-//         if (res.ok) alert("Escena guardada!");
-//         else alert("Error al guardar");
-//       }
-//     };
-
-//     window.addEventListener("message", receive);
-//     return () => window.removeEventListener("message", receive);
-//   }, [id]);
-
-//   return (
-//     <div>
-//       <button
-//         onClick={handleSave}
-//         style={{ position: "absolute", top: 10, left: 10, zIndex: 10 }}
-//       >
-//         Guardar cambios
-//       </button>
-//       <br></br>
-//       <br></br>
-//       <br></br> 
-//       <iframe
-//         ref={iframeRef}
-//         src={`/rooms/${id}.html`}
-//         style={{ width: "100vw", height: "100vh", border: "none" }}
-//       />
-//     </div>
-//   );
-// }
