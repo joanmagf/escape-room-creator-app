@@ -41,14 +41,14 @@ export default function HomePage() {
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
-                href="/dashboard"
+                href="/templates"
                 className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold transition flex items-center"
               >
                 <FaGamepad className="mr-2" />
                 Comença a crear
               </Link>
               <Link
-                href="/demo"
+                href="/rooms"
                 className="bg-transparent border-2 border-blue-400 hover:bg-blue-800 text-white px-6 py-3 rounded-lg text-lg font-semibold transition flex items-center"
               >
                 <FaVrCardboard className="mr-2" />

@@ -1,39 +1,22 @@
-// app/api/rooms/route.ts
-import { Room } from "@/app/lib/types";
-import { NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { NextResponse } from 'next/server';
+import fs from 'fs';
+import path from 'path';
 
 export async function GET() {
-  const templatesDir = path.join(process.cwd(), "public", "templates");
-
-  let rooms: Room[] = [];
+  const roomsDir = path.join(process.cwd(), 'public', 'rooms');
 
   try {
-    const files = fs.readdirSync(templatesDir);
+    const files = fs.readdirSync(roomsDir);
+    const htmlFiles = files.filter((file) => file.endsWith('.html'));
 
-    rooms = files
-      .filter((file) => file.endsWith(".html"))
-      .map((file, index) => {
-        const filePath = path.join(templatesDir, file);
-        const htmlContent = fs.readFileSync(filePath, "utf8");
+    const rooms = htmlFiles.map((file) => {
+      const name = file.replace('.html', '');
+      return { id: name, name };
+    });
 
-        // Puedes usar contenido real aquí, pero para simplificar:
-        const name = path.basename(file, ".html");
-        const description = htmlContent
-          .match(/<title>(.*?)<\/title>/i)?.[1] || "Escape room personalitzat";
-
-        return {
-          id: `${index + 1}`, // o usa file como id
-          name,
-          description,
-          entities: [], // rellena esto si extraes entidades
-        };
-      });
+    return NextResponse.json(rooms);
   } catch (err) {
-    console.error("Error llegint les plantilles:", err);
-    return NextResponse.json({ error: "No s'han pogut carregar les plantilles" }, { status: 500 });
+    console.error("Error leyendo la carpeta de rooms:", err);
+    return NextResponse.json({ error: 'No se pudieron cargar las salas' }, { status: 500 });
   }
-
-  return NextResponse.json(rooms);
 }

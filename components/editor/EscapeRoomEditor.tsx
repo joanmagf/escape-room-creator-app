@@ -123,7 +123,7 @@ export default function EscapeRoomEditor({
       {/* Barra superior */}
       <div className="bg-gray-800 text-white p-2 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <a href="/dashboard" className="p-2 hover:bg-gray-700 rounded">
+          <a href="/templates" className="p-2 hover:bg-gray-700 rounded">
             <FaArrowLeft />
           </a>
           <h1 className="text-xl font-bold">

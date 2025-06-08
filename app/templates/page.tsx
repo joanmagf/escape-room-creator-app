@@ -1,4 +1,4 @@
-// app/dashboard/page.tsx
+// app/templates/page.tsx
 "use client";
 
 import { Room, Template } from "@/app/lib/types";
@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaEdit, FaPlay, FaPlus, FaTrash } from "react-icons/fa";
 
-export default function Dashboard() {
+export default function Templates() {
   const [templates, setTemplates] = useState<Room[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -74,7 +74,7 @@ console.log(templates);
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Les meves sales d'escape</h1>
+          <h1 className="text-2xl font-bold">Les meves plantilles per començar a crear</h1>
           <Link
             href="/editor/new"
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center"
@@ -103,13 +103,6 @@ console.log(templates);
                     >
                       <FaEdit className="mr-1" />
                       Editar
-                    </Link>
-                    <Link
-                      href={`/viewer/${template.name}`}
-                      className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md flex items-center"
-                    >
-                      <FaPlay className="mr-1" />
-                      Jugar {template.id}
                     </Link>
                     <button
                       onClick={() => deleteRoom(template.id)}
