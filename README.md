@@ -1,5 +1,7 @@
 # Aplicació Web: Escape Room Creator
 
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](LICENSE)
+
 Aquesta és l'aplicació web principal del projecte educatiu **[Escape Room Creator](https://github.com/lluisalen/escape-room-creator)**, desenvolupada amb Next.js 14, React 18 i TypeScript. Permet crear, editar i visualitzar escape rooms virtuals amb experiències immersives.
 
 ## 📚 Taula de continguts
@@ -80,26 +82,3 @@ Per a contribuir al desenvolupament:
 3. Implementar els canvis
 4. Executar les proves
 5. Crear un Pull Request
-
-
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-
----
-
-**[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](LICENSE)**
-
-### ✅ **Què pots fer:**
-- 📤 **Compartir**: Copiar i redistribuir el material en qualsevol format
-- 🔄 **Adaptar**: Modificar, remesclar i crear a partir del material
-- 🎓 **Ús educatiu**: Utilitzar-lo en centres educatius i formació
-- 👥 **Ús personal**: Projectes personals i d'aprenentatge
-
-### ⚠️ **Condicions:**
-- 🏷️ **Atribució**: Has de citar l'autor original (Lluís Alemany)
-- 🚫 **No comercial**: No pots utilitzar-lo per obtenir beneficis econòmics
-- 🔄 **Compartir igual**: Les teves adaptacions han de tenir la mateixa llicència
-
-### 🎨 **Assets de Tercers**
-Si afegeixes recursos externs (models 3D, imatges, sons), assegura't que siguin compatibles:
-- ✅ **Recomanat**: CC0, CC BY, CC BY-SA, CC BY-NC, CC BY-NC-SA
-- ❌ **No compatible**: Materials amb copyright o llicències comercials restrictives
